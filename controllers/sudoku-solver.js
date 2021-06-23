@@ -40,7 +40,6 @@ class SudokuSolver {
   checkRegionPlacement(puzzleString, row, column, value) {
     // if cell filled by anything but the value itself it's an automatic invalid
     if (puzzleString[row * 9 + column] !== "." && puzzleString[row * 9 + column] != value) {
-      console.log("hell");
       return false;
     }
     const [oRow, oCol] = [row, column];
@@ -58,10 +57,10 @@ class SudokuSolver {
   }
 
   solve(puzzleString) {
+    if (!this.validPuzzleString(puzzleString)) return false;
     const backtrack = (idx, grid) => {
       if (idx >= 81) return grid;
 
-      // for (let i = idx; i < 81; i++) {
       const [row, col] = [Math.floor(idx / 9), idx % 9];
       for (let k = 1; k <= 9; k++) {
         if (
@@ -69,19 +68,17 @@ class SudokuSolver {
           this.checkColPlacement(grid, row, col, k) &&
           this.checkRegionPlacement(grid, row, col, k)
         ) {
-          // console.log(grid);
           const res = backtrack(idx + 1, grid.substr(0, idx) + String(k) + grid.substr(idx + 1));
-          // console.log(res);
           if (typeof res !== "boolean") return res;
-          // }
         }
       }
       return false;
     };
-    // console.log(puzzleString);
     const res = backtrack(0, puzzleString);
-    // if (res) return res;
     return res;
+  }
+  validPuzzleString(puzzleString) {
+    return /^[\d\.]{81}$/.test(puzzleString);
   }
 }
 
